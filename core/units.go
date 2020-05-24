@@ -5,6 +5,7 @@ import (
 )
 
 type Unit interface {
+	ID() string
 	Position() int
 	Team() Team
 	AddEnemies([]Unit)
@@ -60,6 +61,10 @@ func (u *unit) Position() int {
 
 func (u *unit) Team() Team {
 	return u.team
+}
+
+func (u *unit) ID() string {
+	return u.id
 }
 
 func NewUnit(position int, team Team) Unit {

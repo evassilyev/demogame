@@ -7,7 +7,9 @@ type Battle interface {
 }
 
 type battle struct {
-	units []Unit
+	units        []Unit
+	unitsInFight map[string]*Fight
+	fights       map[string]*Fight
 }
 
 func (b *battle) Start() {

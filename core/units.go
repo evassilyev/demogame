@@ -7,9 +7,9 @@ import (
 type Unit interface {
 	Position() int
 	Team() Team
-	Enemies() []Unit
 	AddEnemies([]Unit)
-	Aim()
+	NearestEnemy() Unit
+	Aim(int)
 	Move()
 }
 
@@ -27,7 +27,7 @@ func (u *unit) Move() {
 	u.position = u.newPosition
 }
 
-func (u *unit) nearestEnemy() (nearest Unit) {
+func (u *unit) NearestEnemy() (nearest Unit) {
 	distance := FieldSize + 1
 	for _, e := range u.enemies {
 		d := e.Position() - u.position
@@ -42,30 +42,16 @@ func (u *unit) nearestEnemy() (nearest Unit) {
 	return
 }
 
-func (u *unit) Aim() {
-	target := u.nearestEnemy()
-	u.moveToTarget(target)
-}
-
-func (u *unit) Enemies() []Unit {
-	return u.enemies
-}
-
-func (u *unit) AddEnemies(e []Unit) {
-	u.enemies = append(u.enemies, e...)
-}
-
-func (u *unit) moveToTarget(u2 Unit) {
-	var d = u2.Position() - u.position
-	if d == 1 || d == -1 || d == 0 {
-		// do nothing (fight)
-		return
-	}
+func (u *unit) Aim(d int) {
 	if d > 0 {
 		u.newPosition = u.position + 1
 	} else {
 		u.newPosition = u.position - 1
 	}
+}
+
+func (u *unit) AddEnemies(e []Unit) {
+	u.enemies = append(u.enemies, e...)
 }
 
 func (u *unit) Position() int {

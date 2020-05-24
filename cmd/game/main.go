@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+const (
+	unitsInTeam = 10
+	teams       = 3
+)
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	units := initUnits(core.FieldSize, teams, unitsInTeam)
@@ -17,21 +22,16 @@ func main() {
 	showPositions(units)
 }
 
-const (
-	unitsInTeam = 10
-	teams       = 2
-)
-
-func initUnits(field, tn, uit int) (units []core.Unit) {
-	teams := make([][]core.Unit, tn)
-	for i := 0; i < tn; i++ {
-		for j := 0; j < uit; j++ {
+func initUnits(field, teamNumber, unitsInTeam int) (units []core.Unit) {
+	teams := make([][]core.Unit, teamNumber)
+	for i := 0; i < teamNumber; i++ {
+		for j := 0; j < unitsInTeam; j++ {
 			teams[i] = append(teams[i], core.NewUnit(rand.Intn(field), core.Team(i)))
 		}
 	}
-	for i := 0; i < tn; i++ {
+	for i := 0; i < teamNumber; i++ {
 		for _, u := range teams[i] {
-			for j := 0; j < tn; j++ {
+			for j := 0; j < teamNumber; j++ {
 				if j == i {
 					continue
 				}
@@ -39,7 +39,7 @@ func initUnits(field, tn, uit int) (units []core.Unit) {
 			}
 		}
 	}
-	for i := 0; i < tn; i++ {
+	for i := 0; i < teamNumber; i++ {
 		units = append(units, teams[i]...)
 	}
 	return

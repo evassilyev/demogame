@@ -74,6 +74,12 @@ func NewBattle(u []Unit) Battle {
 }
 
 func (b *battle) PrintWinners(winners Team) {
+	fmt.Println()
+	for i := 0; i < FieldSize; i++ {
+		fmt.Print("*")
+	}
+	fmt.Println()
+
 	if winners == Team(-1) {
 		fmt.Println("All units are dead")
 	} else {

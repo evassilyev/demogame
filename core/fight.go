@@ -7,12 +7,12 @@ import (
 
 type FightsHandler struct {
 	infight map[string]string
-	fights  map[string][]Unit
+	fights  map[string]map[string]Unit
 }
 
 func NewFightsHandler() *FightsHandler {
-	fm := map[string]string{}
-	f := map[string][]Unit{}
+	fm := make(map[string]string)
+	f := map[string]map[string]Unit{}
 	return &FightsHandler{
 		infight: fm,
 		fights:  f,
@@ -24,16 +24,27 @@ func (fh *FightsHandler) Involve(fighter Unit, enemy Unit) {
 	ekey, eif := fh.infight[enemy.ID()]
 	if eif {
 		fh.infight[fighter.ID()] = ekey
-		fh.fights[ekey] = append(fh.fights[ekey], fighter)
+		if _, ok := fh.fights[ekey]; !ok {
+			fh.fights[ekey] = map[string]Unit{}
+		}
+		fh.fights[ekey][fighter.ID()] = fighter
 	} else {
 		if !fif {
 			fid := uuid.New().String()
 			fh.infight[enemy.ID()] = fid
 			fh.infight[fighter.ID()] = fid
-			fh.fights[fid] = append(fh.fights[fid], enemy, fighter)
+			if _, ok := fh.fights[fid]; !ok {
+				fh.fights[fid] = map[string]Unit{}
+			}
+
+			fh.fights[fid][enemy.ID()] = enemy
+			fh.fights[fid][fighter.ID()] = fighter
 		} else {
 			fh.infight[enemy.ID()] = fkey
-			fh.fights[fkey] = append(fh.fights[fkey], enemy)
+			if _, ok := fh.fights[fkey]; !ok {
+				fh.fights[fkey] = map[string]Unit{}
+			}
+			fh.fights[fkey][enemy.ID()] = enemy
 		}
 	}
 }
@@ -43,7 +54,9 @@ func (fh *FightsHandler) PrintFights() {
 	for key, val := range fh.fights {
 		fmt.Print(key, ":")
 		for _, unit := range val {
-			fmt.Print(unit.Team(), ":", unit.Health(), ",")
+			if unit.IsAlive() {
+				fmt.Print(unit.Team(), ":", unit.Health(), ",")
+			}
 		}
 		fmt.Println()
 	}
@@ -70,7 +83,12 @@ func (fh *FightsHandler) HandleFights() {
 
 	var finised []string
 	for key, units := range fh.fights {
-		f, _ := isFihised(units)
+		var u []Unit
+		for _, v := range units {
+			u = append(u, v)
+		}
+
+		f, _ := isFihised(u)
 		if f {
 			finised = append(finised, key)
 		}

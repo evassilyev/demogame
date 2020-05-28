@@ -7,9 +7,8 @@ type Battle interface {
 }
 
 type battle struct {
-	units        []Unit
-	unitsInFight map[string]*Fight
-	fights       map[string]*Fight
+	units []Unit
+	fh    *FightsHandler
 }
 
 func (b *battle) Start() {
@@ -20,13 +19,14 @@ func (b *battle) Start() {
 			target := u.NearestEnemy()
 			var d = target.Position() - u.Position()
 			if d <= 1 && d >= -1 {
-				// TODO load unit to fight
+				b.fh.Involve(u, target)
 				continue
 			}
 			u.Aim(d)
 		}
-
 		// TODO Handle all fights
+		// b.fh.HandleFights()
+		// TODO break loop condition - units of just one team alive or all units dead
 
 		for _, u := range b.units {
 			u.Move()
@@ -37,10 +37,13 @@ func (b *battle) Start() {
 			break
 		}
 	}
+	b.fh.PrintFights()
 }
 
 func NewBattle(u []Unit) Battle {
+	f := NewFightsHandler()
 	return &battle{
+		fh:    f,
 		units: u,
 	}
 }

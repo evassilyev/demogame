@@ -8,6 +8,7 @@ type Unit interface {
 	ID() string
 	Position() int
 	Team() Team
+
 	AddEnemies([]Unit)
 	NearestEnemy() Unit
 	Aim(int)

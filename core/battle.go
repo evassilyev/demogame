@@ -15,13 +15,23 @@ type battle struct {
 }
 
 func (b *battle) Start() {
+	fmt.Println("Battle conditions: ")
+	fmt.Printf("Teams: %d\nUnits in Team: %d\n", TeamNum, UnitsInTeam)
 
 	i := 0
 
 	for {
 		i++
-		if i%10 == 0 {
+		if i%5 == 0 {
 			ShowPositions(b.units)
+			b.fh.PrintFights()
+			/*
+				for _, u := range b.units {
+					if u.IsAlive() {
+						fmt.Println(u.Team(), ":", u.Health(), "-", u.NearestEnemy().Team(),":", u.NearestEnemy().Health())
+					}
+				}
+			*/
 		}
 
 		for _, u := range b.units {
@@ -49,26 +59,10 @@ func (b *battle) Start() {
 			}
 		}
 	}
-	b.fh.PrintFights()
 }
 
 func (b *battle) IsFinished() (res bool, winners Team) {
-	winners = Team(-1)
-	res = true
-	first := true
-	for _, u := range b.units {
-		if u.IsAlive() {
-			if first {
-				winners = u.Team()
-				first = false
-			}
-			if u.Team() != winners {
-				res = false
-				return
-			}
-		}
-	}
-	return
+	return isFihised(b.units)
 }
 
 func NewBattle(u []Unit) Battle {
@@ -84,11 +78,17 @@ func (b *battle) PrintWinners(winners Team) {
 		fmt.Println("All units are dead")
 	} else {
 		var wa int
+		var wnrs []Unit
 		for _, u := range b.units {
 			if u.IsAlive() && u.Team() == winners {
 				wa++
+				wnrs = append(wnrs, u)
 			}
 		}
 		fmt.Println(fmt.Sprintf("%d units from team %d won", wa, int(winners)))
+		for _, u := range wnrs {
+			fmt.Println("Unit: ", u.ID(), " ", "Health:", u.Health())
+		}
+		fmt.Println()
 	}
 }

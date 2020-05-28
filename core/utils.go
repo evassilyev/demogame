@@ -4,7 +4,7 @@ import "fmt"
 
 const (
 	UnitsInTeam = 10
-	TeamNum     = 3
+	TeamNum     = 5
 )
 
 func ShowPositions(units []Unit) {

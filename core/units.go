@@ -8,6 +8,7 @@ type Unit interface {
 	ID() string
 	Position() int
 	Team() Team
+	Health() int
 
 	AddEnemies([]Unit)
 
@@ -47,7 +48,7 @@ func (u *unit) GetDamage(d int) {
 
 func (u *unit) Wound() {
 	u.health = u.newHealth
-	if u.health < 0 {
+	if u.health <= 0 {
 		u.dead = true
 	}
 }
@@ -99,6 +100,10 @@ func (u *unit) Team() Team {
 
 func (u *unit) ID() string {
 	return u.id
+}
+
+func (u *unit) Health() int {
+	return u.health
 }
 
 func NewUnit(position int, team Team) Unit {

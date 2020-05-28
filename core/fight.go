@@ -23,10 +23,8 @@ func (fh *FightsHandler) Involve(fighter Unit, enemy Unit) {
 	fkey, fif := fh.infight[fighter.ID()]
 	ekey, eif := fh.infight[enemy.ID()]
 	if eif {
-		if !fif {
-			fh.infight[fighter.ID()] = ekey
-			fh.fights[ekey] = append(fh.fights[ekey], fighter)
-		}
+		fh.infight[fighter.ID()] = ekey
+		fh.fights[ekey] = append(fh.fights[ekey], fighter)
 	} else {
 		if !fif {
 			fid := uuid.New().String()
@@ -45,7 +43,7 @@ func (fh *FightsHandler) PrintFights() {
 	for key, val := range fh.fights {
 		fmt.Print(key, ":")
 		for _, unit := range val {
-			fmt.Print(unit.Team())
+			fmt.Print(unit.Team(), ":", unit.Health(), ",")
 		}
 		fmt.Println()
 	}
@@ -69,5 +67,34 @@ func (fh *FightsHandler) HandleFights() {
 			}
 		}
 	}
-	// TODO clear fights
+
+	var finised []string
+	for key, units := range fh.fights {
+		f, _ := isFihised(units)
+		if f {
+			finised = append(finised, key)
+		}
+	}
+	for _, key := range finised {
+		delete(fh.fights, key)
+	}
+}
+
+func isFihised(units []Unit) (res bool, winners Team) {
+	winners = Team(-1)
+	res = true
+	first := true
+	for _, u := range units {
+		if u.IsAlive() {
+			if first {
+				winners = u.Team()
+				first = false
+			}
+			if u.Team() != winners {
+				res = false
+				return
+			}
+		}
+	}
+	return
 }

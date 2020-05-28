@@ -15,8 +15,6 @@ type battle struct {
 }
 
 func (b *battle) Start() {
-	fmt.Println("Battle conditions: ")
-	fmt.Printf("Teams: %d\nUnits in Team: %d\n", TeamNum, UnitsInTeam)
 
 	i := 0
 

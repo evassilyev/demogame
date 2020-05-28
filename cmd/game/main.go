@@ -14,6 +14,11 @@ func main() {
 
 	fmt.Print("Initial positions")
 	core.ShowPositions(units)
+	fmt.Println("Battle conditions: ")
+	fmt.Printf("Teams: %d\nUnits in Team: %d\n", core.TeamNum, core.UnitsInTeam)
+	for i := 0; i < core.FieldSize; i++ {
+		fmt.Print("*")
+	}
 
 	battle := core.NewBattle(units)
 	battle.Start()

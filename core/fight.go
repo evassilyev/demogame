@@ -40,11 +40,8 @@ func (fh *FightsHandler) Involve(fighter Unit, enemy Unit) {
 	}
 }
 
-func (fh *FightsHandler) HandleFights() {
-	// TODO handle fights
-}
-
 func (fh *FightsHandler) PrintFights() {
+	fmt.Println("Current fights:")
 	for key, val := range fh.fights {
 		fmt.Print(key, ":")
 		for _, unit := range val {
@@ -52,4 +49,25 @@ func (fh *FightsHandler) PrintFights() {
 		}
 		fmt.Println()
 	}
+}
+
+func (fh *FightsHandler) HandleFights() {
+	for _, units := range fh.fights {
+		for _, u := range units {
+			if u.IsAlive() {
+				for _, e := range units {
+					if u.Team() != e.Team() && e.IsAlive() {
+						e.GetDamage(u.Attack())
+					}
+				}
+			}
+		}
+		for _, u := range units {
+			u.Wound()
+			if !u.IsAlive() {
+				delete(fh.infight, u.ID())
+			}
+		}
+	}
+	// TODO clear fights
 }

@@ -7,26 +7,26 @@ import (
 	"time"
 )
 
-const (
-	unitsInTeam = 10
-	teams       = 3
-)
-
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	units := initUnits(core.FieldSize, teams, unitsInTeam)
-	showPositions(units)
+
+	units := InitUnits(core.TeamNum, core.UnitsInTeam)
+
+	fmt.Print("Initial positions")
+	core.ShowPositions(units)
+
 	battle := core.NewBattle(units)
 	battle.Start()
-	fmt.Println("After move")
-	showPositions(units)
+
+	fmt.Println("Final positions")
+	core.ShowPositions(units)
 }
 
-func initUnits(field, teamNumber, unitsInTeam int) (units []core.Unit) {
+func InitUnits(teamNumber, unitsInTeam int) (units []core.Unit) {
 	teams := make([][]core.Unit, teamNumber)
 	for i := 0; i < teamNumber; i++ {
 		for j := 0; j < unitsInTeam; j++ {
-			teams[i] = append(teams[i], core.NewUnit(rand.Intn(field), core.Team(i)))
+			teams[i] = append(teams[i], core.NewUnit(rand.Intn(core.FieldSize), core.Team(i)))
 		}
 	}
 	for i := 0; i < teamNumber; i++ {
@@ -43,23 +43,4 @@ func initUnits(field, teamNumber, unitsInTeam int) (units []core.Unit) {
 		units = append(units, teams[i]...)
 	}
 	return
-}
-
-func showPositions(units []core.Unit) {
-	for t := 0; t < teams; t++ {
-		for p := 0; p <= core.FieldSize; p++ {
-			unit := false
-			for _, u := range units {
-				if u.Team() == core.Team(t) && u.Position() == p {
-					fmt.Print(t)
-					unit = true
-				}
-			}
-			if unit {
-				continue
-			}
-			fmt.Print("_")
-		}
-		fmt.Print("\n")
-	}
 }
